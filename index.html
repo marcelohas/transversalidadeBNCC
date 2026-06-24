@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Computação Transversal na BNCC</title>
+    <meta name="description" content="Portal de busca e mapeamento das habilidades de Computação integradas de forma transversal à BNCC.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <h1>Portal BNCC <span>Computação Transversal</span></h1>
+            </div>
+            <p class="subtitle">Planejamento e integração das habilidades de computação de forma desplugada e plugada para a Educação Básica</p>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Painel de Filtros e Busca -->
+        <section class="search-panel-card" aria-label="Painel de filtros de pesquisa">
+            <div class="search-row">
+                <div class="search-box-wrapper">
+                    <span class="search-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Pesquisar por código da habilidade, termo ou palavra-chave..." aria-label="Pesquisar habilidades">
+                </div>
+                <button id="btn-clear" class="btn btn-secondary" title="Limpar todos os filtros">
+                    <span class="btn-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                    </span>
+                    Limpar
+                </button>
+                <button id="btn-print-all" class="btn btn-primary" title="Imprimir listagem filtrada">
+                    <span class="btn-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </span>
+                    Imprimir Tudo
+                </button>
+            </div>
+
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="filter-segmento">Segmento</label>
+                    <div class="select-wrapper">
+                        <select id="filter-segmento" aria-label="Filtrar por Segmento">
+                            <option value="">Todos os Segmentos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-ano">Ano / Série</label>
+                    <div class="select-wrapper">
+                        <select id="filter-ano" aria-label="Filtrar por Ano ou Série">
+                            <option value="">Todos os Anos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-componente">Disciplina (Componente)</label>
+                    <div class="select-wrapper">
+                        <select id="filter-componente" aria-label="Filtrar por Disciplina">
+                            <option value="">Todas as Disciplinas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-eixo">Eixo de Computação</label>
+                    <div class="select-wrapper">
+                        <select id="filter-eixo" aria-label="Filtrar por Eixo de Computação">
+                            <option value="">Todos os Eixos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Indicador de Resultados -->
+        <div class="results-meta">
+            <p id="results-count">Carregando dados da matriz...</p>
+        </div>
+
+        <!-- Grid de Cards de Integração -->
+        <section class="cards-grid" id="cards-container" aria-live="polite">
+            <!-- Os cards serão injetados dinamicamente via JS -->
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="app-footer no-print">
+        <div class="container footer-content">
+            <p><strong>Portal de Computação Transversal na BNCC</strong> — Desenvolvido de forma aberta e colaborativa.</p>
+            <p class="repo-link" style="margin-bottom: 1.5rem;">Disponível no GitHub: <a href="https://github.com/marcelohas/transversalidadeBNCC.git" target="_blank" rel="noopener noreferrer">github.com/marcelohas/transversalidadeBNCC</a></p>
+            
+            <div class="social-channels">
+                <span class="social-title">Criado por Tchelo (Marcelo Vieira):</span>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/tcheloparaprofessores/" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        LinkedIn
+                    </a>
+                    <a href="https://www.youtube.com/@TcheloParaProfessores" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                        YouTube
+                    </a>
+                    <a href="https://www.instagram.com/tcheloeduca/" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts de Dados e Lógica -->
+    <script src="js/bncc_all_skills.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -759,6 +759,24 @@ select:focus {
     color: var(--warning);
 }
 
+/* Nota explicativa de IA no card */
+.project-ai-note {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
+    line-height: 1.35;
+}
+
+.project-ai-note svg {
+    color: var(--primary-light);
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
 .project-ai-btn {
     margin-top: auto;
     display: inline-flex;

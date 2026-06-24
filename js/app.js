@@ -384,17 +384,27 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            <span>Ao clicar, o prompt é copiado para a memória. Na aba do Gemini, basta colar (Ctrl+V).</span>
+                            <span>Ao clicar, o prompt é copiado. Na aba que abrir, basta colar (Ctrl+V) no chat da IA.</span>
                         </p>
 
-                        <button class="project-ai-btn" data-item-id="${item.id}" title="Melhorar plano de aula no seu Gemini gratuito">
-                            <span class="btn-icon">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polygon points="12 2 2 22 22 22 12 2"></polygon>
-                                </svg>
-                            </span>
-                            Melhore no Gemini Gratuito
-                        </button>
+                        <div class="ai-buttons-group">
+                            <button class="project-ai-btn btn-gemini" data-item-id="${item.id}" title="Melhorar plano de aula no seu Gemini gratuito">
+                                <span class="btn-icon">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0c-.3 5.4-4.6 9.7-10 10 5.4.3 9.7 4.6 10 10 .3-5.4 4.6-9.7 10-10-5.4-.3-9.7-4.6-10-10z"/>
+                                    </svg>
+                                </span>
+                                Gemini
+                            </button>
+                            <button class="project-ai-btn btn-chatgpt" data-item-id="${item.id}" title="Melhorar plano de aula no seu ChatGPT gratuito">
+                                <span class="btn-icon">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                </span>
+                                ChatGPT
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -417,10 +427,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 printSingleCard(`card-${item.id}`);
             });
 
-            // Evento do botão do Gemini
-            const aiBtn = card.querySelector(".project-ai-btn");
-            aiBtn.addEventListener("click", () => {
-                generateProjectWithAI(item);
+            // Eventos dos botões de IA
+            const geminiBtn = card.querySelector(".btn-gemini");
+            const chatgptBtn = card.querySelector(".btn-chatgpt");
+            
+            geminiBtn.addEventListener("click", () => {
+                generateProjectWithAI(item, "gemini");
+            });
+            chatgptBtn.addEventListener("click", () => {
+                generateProjectWithAI(item, "chatgpt");
             });
 
             cardsContainer.appendChild(card);
@@ -461,14 +476,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Copia o prompt estruturado e direciona para o chat do Gemini Web
+     * Copia o prompt estruturado e direciona para o chat do Gemini Web ou ChatGPT
      */
-    function generateProjectWithAI(item) {
+    function generateProjectWithAI(item, target) {
         const descTradicional = item.atividade_tradicional;
         const descDesplugada = item.atividade_desplugada;
         const descPlugada = `${item.atividade_plugada.titulo} na plataforma ${item.atividade_plugada.plataforma}`;
 
-        const promptText = `Olá Gemini! Atuo na Educação Básica e estou planejando uma aula transversal de computação.
+        const isGemini = target === "gemini";
+        const aiName = isGemini ? "Gemini" : "ChatGPT";
+        const targetUrl = isGemini ? "https://gemini.google.com" : "https://chatgpt.com";
+
+        const promptText = `Olá ${aiName}! Atuo na Educação Básica e estou planejando uma aula transversal de computação.
 Gostaria que você aprofundasse o Projeto Integrador a seguir, detalhando as atividades práticas e sugerindo critérios de avaliação formativa.
 
 Aqui estão os detalhes do plano atual:
@@ -489,17 +508,17 @@ Por favor, elabore um plano de aula expandido e estruturado com:
 
 Escreva a resposta em língua portuguesa de forma clara, acolhedora e direta para o professor regente.`;
 
-        // 1. Abrir a aba do Gemini imediatamente (síncrono) para contornar o bloqueador de popups do navegador
-        window.open("https://gemini.google.com", "_blank");
+        // 1. Abrir a aba correspondente imediatamente (síncrono) para contornar o bloqueador de popups do navegador
+        window.open(targetUrl, "_blank");
 
         // 2. Copiar o prompt utilizando o mecanismo robusto
         copyToClipboard(promptText).then(() => {
             // Mostrar Toast de sucesso
-            showToast("Prompt copiado! Cole (Ctrl+V) no Gemini para aprofundar seu plano.");
+            showToast(`Prompt copiado! Cole (Ctrl+V) no ${aiName} para aprofundar seu plano.`);
         }).catch(err => {
-            console.error("Falha ao copiar prompt automaticamente: ", err);
+            console.error(`Falha ao copiar prompt automaticamente para ${aiName}: `, err);
             // Fallback extremo
-            alert("Por favor, selecione e copie o texto abaixo (Ctrl+C) para usar no Gemini:\n\n" + promptText);
+            alert(`Por favor, selecione e copie o texto abaixo (Ctrl+C) para usar no ${aiName}:\n\n` + promptText);
         });
     }
 

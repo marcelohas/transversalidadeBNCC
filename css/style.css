@@ -783,14 +783,12 @@ select:focus {
 }
 
 .project-ai-btn {
-    margin-top: auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
-    padding: 0.75rem 1.25rem;
+    padding: 0.75rem 1rem;
     border-radius: var(--radius-md);
     text-decoration: none;
     font-size: 0.85rem;
@@ -799,17 +797,47 @@ select:focus {
     cursor: pointer;
     transition: var(--transition);
     width: 100%;
+}
+
+.project-ai-btn:active {
+    transform: translateY(0);
+}
+
+/* Grupo de Botões de IA */
+.ai-buttons-group {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: auto;
+}
+
+@media (max-width: 480px) {
+    .ai-buttons-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+.project-ai-btn.btn-gemini {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
 }
 
-.project-ai-btn:hover {
+.project-ai-btn.btn-gemini:hover {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
     box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
     transform: translateY(-1px);
 }
 
-.project-ai-btn:active {
-    transform: translateY(0);
+.project-ai-btn.btn-chatgpt {
+    background: linear-gradient(135deg, #10a37f 0%, #0d8a6b 100%);
+    box-shadow: 0 4px 10px rgba(16, 163, 127, 0.15);
+}
+
+.project-ai-btn.btn-chatgpt:hover {
+    background: linear-gradient(135deg, #0d8a6b 0%, #0a6b53 100%);
+    box-shadow: 0 6px 14px rgba(16, 163, 127, 0.3);
+    transform: translateY(-1px);
 }
 
 /* Toast Estilos */

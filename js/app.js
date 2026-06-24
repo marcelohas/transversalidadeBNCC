@@ -392,6 +392,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * Auxiliar robusto para copiar texto para a área de transferência,
+     * mesmo em conexões locais não-seguras (protocolo file:///)
+     */
+    function copyToClipboard(text) {
+        return new Promise((resolve, reject) => {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(resolve).catch(reject);
+            } else {
+                try {
+                    const textarea = document.createElement("textarea");
+                    textarea.value = text;
+                    textarea.style.top = "0";
+                    textarea.style.left = "0";
+                    textarea.style.position = "fixed";
+                    textarea.style.opacity = "0";
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    const successful = document.execCommand("copy");
+                    document.body.removeChild(textarea);
+                    if (successful) {
+                        resolve();
+                    } else {
+                        reject(new Error("Falha ao copiar usando execCommand."));
+                    }
+                } catch (err) {
+                    reject(err);
+                }
+            }
+        });
+    }
+
+    /**
      * Copia o prompt estruturado e direciona para o chat do Gemini Web
      */
     function generateProjectWithAI(item) {
@@ -420,18 +453,17 @@ Por favor, elabore um plano de aula expandido e estruturado com:
 
 Escreva a resposta em língua portuguesa de forma clara, acolhedora e direta para o professor regente.`;
 
-        // Copiar o prompt
-        navigator.clipboard.writeText(promptText).then(() => {
-            // Abrir aba do Gemini Web
-            window.open("https://gemini.google.com", "_blank");
-            
+        // 1. Abrir a aba do Gemini imediatamente (síncrono) para contornar o bloqueador de popups do navegador
+        window.open("https://gemini.google.com", "_blank");
+
+        // 2. Copiar o prompt utilizando o mecanismo robusto
+        copyToClipboard(promptText).then(() => {
             // Mostrar Toast de sucesso
             showToast("Prompt copiado! Cole (Ctrl+V) no Gemini para aprofundar seu plano.");
         }).catch(err => {
             console.error("Falha ao copiar prompt automaticamente: ", err);
-            // Fallback se houver problemas de segurança de clipboard do navegador
-            alert("Copiamos o prompt para você! Se necessário, copie daqui:\n\n" + promptText);
-            window.open("https://gemini.google.com", "_blank");
+            // Fallback extremo
+            alert("Por favor, selecione e copie o texto abaixo (Ctrl+C) para usar no Gemini:\n\n" + promptText);
         });
     }
 

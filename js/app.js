@@ -101,6 +101,33 @@ document.addEventListener("DOMContentLoaded", () => {
         window.print();
     });
 
+    // Ouvintes de Eventos para o Guia do FUNDEB
+    const btnOpenFundebGuide = document.getElementById("btn-open-fundeb-guide");
+    const modalFundebGuide = document.getElementById("modal-fundeb-guide");
+    const modalFundebClose = document.getElementById("modal-fundeb-close");
+    const btnCloseFundebModal = document.getElementById("btn-close-fundeb-modal");
+
+    if (btnOpenFundebGuide && modalFundebGuide) {
+        const openFundeb = () => {
+            modalFundebGuide.classList.add("active");
+            modalFundebGuide.setAttribute("aria-hidden", "false");
+        };
+
+        const closeFundeb = () => {
+            modalFundebGuide.classList.remove("active");
+            modalFundebGuide.setAttribute("aria-hidden", "true");
+        };
+
+        btnOpenFundebGuide.addEventListener("click", openFundeb);
+        modalFundebClose.addEventListener("click", closeFundeb);
+        btnCloseFundebModal.addEventListener("click", closeFundeb);
+        
+        // Fechar clicando fora do modal
+        window.addEventListener("click", (e) => {
+            if (e.target === modalFundebGuide) closeFundeb();
+        });
+    }
+
     /**
      * Inicializa os selects de filtro com valores dinâmicos de toda a base de dados
      */

@@ -86,20 +86,24 @@ document.addEventListener("DOMContentLoaded", () => {
     filterData(); // Filtra e carrega o estado inicial (cards premium)
 
     // Ouvintes de Eventos
-    searchInput.addEventListener("input", filterData);
-    selectSegmento.addEventListener("change", () => {
-        updateAnoOptions(); // Filtra os anos disponíveis com base no segmento
-        filterData();
-    });
-    selectAno.addEventListener("change", filterData);
-    selectComponente.addEventListener("change", filterData);
-    selectEixo.addEventListener("change", filterData);
-    selectTct.addEventListener("change", filterData);
+    if (searchInput) searchInput.addEventListener("input", filterData);
+    if (selectSegmento) {
+        selectSegmento.addEventListener("change", () => {
+            updateAnoOptions(); // Filtra os anos disponíveis com base no segmento
+            filterData();
+        });
+    }
+    if (selectAno) selectAno.addEventListener("change", filterData);
+    if (selectComponente) selectComponente.addEventListener("change", filterData);
+    if (selectEixo) selectEixo.addEventListener("change", filterData);
+    if (selectTct) selectTct.addEventListener("change", filterData);
     
-    btnClear.addEventListener("click", resetAllFilters);
-    btnPrintAll.addEventListener("click", () => {
-        window.print();
-    });
+    if (btnClear) btnClear.addEventListener("click", resetAllFilters);
+    if (btnPrintAll) {
+        btnPrintAll.addEventListener("click", () => {
+            window.print();
+        });
+    }
 
     // Ouvintes de Eventos para o Guia do FUNDEB
     const btnOpenFundebGuide = document.getElementById("btn-open-fundeb-guide");
@@ -118,9 +122,24 @@ document.addEventListener("DOMContentLoaded", () => {
             modalFundebGuide.setAttribute("aria-hidden", "true");
         };
 
-        btnOpenFundebGuide.addEventListener("click", openFundeb);
-        modalFundebClose.addEventListener("click", closeFundeb);
-        btnCloseFundebModal.addEventListener("click", closeFundeb);
+        btnOpenFundebGuide.addEventListener("click", (e) => {
+            e.preventDefault();
+            openFundeb();
+        });
+        
+        if (modalFundebClose) {
+            modalFundebClose.addEventListener("click", (e) => {
+                e.preventDefault();
+                closeFundeb();
+            });
+        }
+        
+        if (btnCloseFundebModal) {
+            btnCloseFundebModal.addEventListener("click", (e) => {
+                e.preventDefault();
+                closeFundeb();
+            });
+        }
         
         // Fechar clicando fora do modal
         window.addEventListener("click", (e) => {

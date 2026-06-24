@@ -759,21 +759,26 @@ select:focus {
     color: var(--warning);
 }
 
-/* Nota explicativa de IA no card */
+/* Nota explicativa de IA no card (Em Destaque) */
 .project-ai-note {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
+    font-size: 0.78rem;
+    color: var(--primary-dark);
+    background-color: var(--primary-bg);
+    border: 1px solid rgba(79, 70, 229, 0.25);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 0.85rem;
     margin-top: auto;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: flex-start;
-    gap: 0.25rem;
-    line-height: 1.35;
+    gap: 0.5rem;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 .project-ai-note svg {
-    color: var(--primary-light);
-    margin-top: 0.1rem;
+    color: var(--primary);
+    margin-top: 0.15rem;
     flex-shrink: 0;
 }
 

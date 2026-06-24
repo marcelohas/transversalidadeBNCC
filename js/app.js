@@ -1,6 +1,6 @@
 /**
  * Lógica de Controle do Portal de Computação Transversal na BNCC
- * Carrega dados dinamicamente, popula filtros e realiza buscas rápidas na BNCC completa.
+ * Carrega dados dinamicamente, popula filtros, realiza buscas e integra com o Gemini Web via Clipboard.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectAno = document.getElementById("filter-ano");
     const selectComponente = document.getElementById("filter-componente");
     const selectEixo = document.getElementById("filter-eixo");
+    const selectTct = document.getElementById("filter-tct");
     const btnClear = document.getElementById("btn-clear");
     const btnPrintAll = document.getElementById("btn-print-all");
     const resultsCount = document.getElementById("results-count");
@@ -20,8 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Adiciona os mapeamentos customizados de referência (Premium)
     BNCC_DATABASE.forEach(item => {
+        const projectData = item.projeto_integrador || {
+            titulo: `Projeto: ${item.componente} + Pensamento Computacional`,
+            descricao: `<p><strong>Objetivo:</strong> Resolver problemas reais integrando o conteúdo regular de ${item.componente} à lógica computacional.</p>`
+        };
         FULL_CURRICULUM.push({
             ...item,
+            tema_transversal: item.tema_transversal || "Meio Ambiente",
+            projeto_integrador: projectData,
             isCustom: true
         });
     });
@@ -34,6 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!alreadyMapped) {
                 const compIntegration = getAdaptiveComputingIntegration(item.segmento, item.ano, item.componente);
                 
+                // Obter dados locais padrão para o Projeto Integrador
+                const tempItem = {
+                    componente: item.componente,
+                    segmento: item.segmento,
+                    ano: item.ano
+                };
+                const projectData = getDefaultProject(tempItem);
+
                 FULL_CURRICULUM.push({
                     id: `${item.codigo}_AUTO`,
                     segmento: item.segmento,
@@ -55,6 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         titulo: compIntegration.plugged_titulo,
                         url: compIntegration.url
                     },
+                    tema_transversal: projectData.tema,
+                    projeto_integrador: {
+                        titulo: projectData.titulo,
+                        descricao: projectData.descricao
+                    },
                     isCustom: false
                 });
             }
@@ -68,12 +88,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ouvintes de Eventos
     searchInput.addEventListener("input", filterData);
     selectSegmento.addEventListener("change", () => {
-        updateAnoOptions(); // Filtra os anos disponíveis com base no segmento para evitar seleções vazias
+        updateAnoOptions(); // Filtra os anos disponíveis com base no segmento
         filterData();
     });
     selectAno.addEventListener("change", filterData);
     selectComponente.addEventListener("change", filterData);
     selectEixo.addEventListener("change", filterData);
+    selectTct.addEventListener("change", filterData);
     
     btnClear.addEventListener("click", resetAllFilters);
     btnPrintAll.addEventListener("click", () => {
@@ -88,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const componentes = [...new Set(FULL_CURRICULUM.map(item => item.componente))].sort();
         const eixos = [...new Set(FULL_CURRICULUM.map(item => item.eixo_computacao))].sort();
 
-        // Popular Segmentos
         segmentos.forEach(seg => {
             const opt = document.createElement("option");
             opt.value = seg;
@@ -96,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
             selectSegmento.appendChild(opt);
         });
 
-        // Popular Componentes (Disciplinas)
         componentes.forEach(comp => {
             const opt = document.createElement("option");
             opt.value = comp;
@@ -104,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
             selectComponente.appendChild(opt);
         });
 
-        // Popular Eixos
         eixos.forEach(eixo => {
             const opt = document.createElement("option");
             opt.value = eixo;
@@ -120,8 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function updateAnoOptions() {
         const selectedSegmento = selectSegmento.value;
-        
-        // Limpar select de anos mantendo apenas a opção "Todos os Anos"
         selectAno.innerHTML = '<option value="">Todos os Anos</option>';
 
         let filteredItems = FULL_CURRICULUM;
@@ -145,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Remove acentos, diacríticos e converte a string para caixa baixa para fins de busca aproximada
+     * Remove acentos, diacríticos e converte a string para caixa baixa
      */
     function normalizeString(str) {
         if (!str) return "";
@@ -156,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Realiza a filtragem combinada dos dados com paginação/lazy-loading implícito
+     * Realiza a filtragem combinada dos dados com lazy-loading implícito
      */
     function filterData() {
         const query = normalizeString(searchInput.value).trim();
@@ -164,23 +180,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const ano = selectAno.value;
         const componente = selectComponente.value;
         const eixo = selectEixo.value;
+        const tct = selectTct.value;
 
-        // Se nenhum critério de busca e nenhum filtro estiverem selecionados:
-        // Exibimos apenas as habilidades premium mapeadas manualmente para evitar gargalo de performance de render
-        if (!query && !segmento && !ano && !componente && !eixo) {
+        // Se nenhum critério de busca e nenhum filtro estiverem selecionados, exibe apenas os premium
+        if (!query && !segmento && !ano && !componente && !eixo && !tct) {
             resultsCount.innerHTML = `Exibindo <strong>${BNCC_DATABASE.length} mapeamentos de referência</strong>. Digite um termo de busca ou use os filtros acima para pesquisar em toda a base da BNCC (1.397 habilidades).`;
             renderCards(FULL_CURRICULUM.filter(item => item.isCustom));
             return;
         }
 
         const filtered = FULL_CURRICULUM.filter(item => {
-            // Filtros de seleção
             if (segmento && item.segmento !== segmento) return false;
             if (ano && item.ano !== ano) return false;
             if (componente && item.componente !== componente) return false;
             if (eixo && item.eixo_computacao !== eixo) return false;
+            if (tct && item.tema_transversal !== tct) return false;
 
-            // Filtro de busca textual
             if (query) {
                 const searchStr = normalizeString([
                     item.id,
@@ -193,7 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     item.atividade_tradicional,
                     item.atividade_desplugada,
                     item.atividade_plugada.titulo,
-                    item.atividade_plugada.plataforma
+                    item.atividade_plugada.plataforma,
+                    item.tema_transversal,
+                    item.projeto_integrador.titulo
                 ].join(" "));
 
                 return searchStr.includes(query);
@@ -202,12 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return true;
         });
 
-        // Limita a renderização a no máximo 100 itens para não travar o navegador se a busca for muito genérica
         const maxResultsToRender = 100;
         const renderList = filtered.slice(0, maxResultsToRender);
 
         if (filtered.length > maxResultsToRender) {
-            resultsCount.innerHTML = `Encontradas <strong>${filtered.length} habilidades</strong>. Exibindo os primeiros ${maxResultsToRender} resultados para melhor performance (refine a busca se necessário).`;
+            resultsCount.innerHTML = `Encontradas <strong>${filtered.length} habilidades</strong>. Exibindo os primeiros ${maxResultsToRender} resultados para melhor performance.`;
         } else if (filtered.length === 1) {
             resultsCount.innerHTML = `<strong>1 habilidade</strong> encontrada.`;
         } else {
@@ -236,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const segmentClass = getSegmentBadgeClass(item.segmento);
             const eixoClass = getEixoBadgeClass(item.eixo_computacao);
 
-            // Se for uma integração adaptativa, exibimos um pequeno indicador visual
             const indicatorTag = item.isCustom 
                 ? '' 
                 : `<span class="badge" style="background-color: var(--warning-bg); color: var(--warning); border: 1.5px solid var(--warning); margin-left: auto;">Integração Sugerida</span>`;
@@ -255,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="card-body-block">
-                    <!-- Habilidade Regular -->
+                    <!-- Coluna 1: Habilidade Regular -->
                     <div class="section-column">
                         <div class="section-title">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -275,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
 
-                    <!-- Habilidade Computação + Integrações -->
+                    <!-- Coluna 2: Habilidade Computação + Integrações -->
                     <div class="section-column highlight-pc">
                         <div class="section-title">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -296,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p class="atividade-content"><strong>Como fazer:</strong> ${item.atividade_desplugada}</p>
                         </div>
                         
-                        <!-- Coluna de Tecnologia Real se houver URL -->
                         <div class="atividade-block highlight-plugged" style="margin-top: auto; padding-top: 0.5rem;">
                             <span class="atividade-label" style="color: var(--secondary); display: flex; align-items: center; gap: 0.25rem;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -317,6 +331,34 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </svg>
                             </a>
                         </div>
+                    </div>
+
+                    <!-- Coluna 3: Projeto Integrador e Temas Transversais -->
+                    <div class="section-column highlight-project" id="project-box-${item.id}">
+                        <div class="section-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                <line x1="12" y1="11" x2="12" y2="17"></line>
+                                <line x1="9" y1="14" x2="15" y2="14"></line>
+                            </svg>
+                            Projeto Integrador & Temas Transversais
+                        </div>
+                        <div class="habilidade-wrapper" id="project-content-${item.id}">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--warning);">${item.projeto_integrador.titulo}</h4>
+                            <span class="badge" style="background-color: var(--warning-bg); color: var(--warning); margin-top: 0.25rem;">${item.tema_transversal}</span>
+                            <div class="atividade-content" style="margin-top: 0.75rem;">
+                                ${item.projeto_integrador.descricao}
+                            </div>
+                        </div>
+                        
+                        <button class="project-ai-btn" data-item-id="${item.id}" title="Melhorar plano de aula no seu Gemini gratuito">
+                            <span class="btn-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 2 22 22 22 12 2"></polygon>
+                                </svg>
+                            </span>
+                            Melhore no Gemini Gratuito
+                        </button>
                     </div>
                 </div>
 
@@ -339,12 +381,134 @@ document.addEventListener("DOMContentLoaded", () => {
                 printSingleCard(`card-${item.id}`);
             });
 
+            // Evento do botão do Gemini
+            const aiBtn = card.querySelector(".project-ai-btn");
+            aiBtn.addEventListener("click", () => {
+                generateProjectWithAI(item);
+            });
+
             cardsContainer.appendChild(card);
         });
     }
 
     /**
-     * Imprime apenas um card específico da lista, ocultando os outros temporariamente
+     * Copia o prompt estruturado e direciona para o chat do Gemini Web
+     */
+    function generateProjectWithAI(item) {
+        const descTradicional = item.atividade_tradicional;
+        const descDesplugada = item.atividade_desplugada;
+        const descPlugada = `${item.atividade_plugada.titulo} na plataforma ${item.atividade_plugada.plataforma}`;
+
+        const promptText = `Olá Gemini! Atuo na Educação Básica e estou planejando uma aula transversal de computação.
+Gostaria que você aprofundasse o Projeto Integrador a seguir, detalhando as atividades práticas e sugerindo critérios de avaliação formativa.
+
+Aqui estão os detalhes do plano atual:
+- Segmento/Série: ${item.segmento} - ${item.ano}
+- Disciplina (Componente): ${item.componente}
+- Habilidade BNCC Regular: ${item.habilidade_bncc.codigo} - "${item.habilidade_bncc.descricao}"
+- Habilidade Computação Associada: ${item.habilidade_computacao.codigo} - "${item.habilidade_computacao.descricao}" (Eixo: ${item.eixo_computacao})
+- Atividade Tradicional (Sem Computação): "${descTradicional}"
+- Atividade Desplugada (Computação Sem Computador): "${descDesplugada}"
+- Atividade Plugada (Recurso Digital Opcional): "${descPlugada}"
+- Tema Contemporâneo Transversal (TCT) sugerido: "${item.tema_transversal}"
+- Título do Projeto Integrador: "${item.projeto_integrador.titulo}"
+
+Por favor, elabore um plano de aula expandido e estruturado com:
+1. Sequência Didática Passo a Passo detalhada (como o professor deve introduzir a aula, conduzir a prática desplugada e realizar a etapa digital).
+2. Recursos de Apoio Sugeridos para a sala de aula.
+3. Três critérios de avaliação formativa para o professor acompanhar o aprendizado das duas habilidades.
+
+Escreva a resposta em língua portuguesa de forma clara, acolhedora e direta para o professor regente.`;
+
+        // Copiar o prompt
+        navigator.clipboard.writeText(promptText).then(() => {
+            // Abrir aba do Gemini Web
+            window.open("https://gemini.google.com", "_blank");
+            
+            // Mostrar Toast de sucesso
+            showToast("Prompt copiado! Cole (Ctrl+V) no Gemini para aprofundar seu plano.");
+        }).catch(err => {
+            console.error("Falha ao copiar prompt automaticamente: ", err);
+            // Fallback se houver problemas de segurança de clipboard do navegador
+            alert("Copiamos o prompt para você! Se necessário, copie daqui:\n\n" + promptText);
+            window.open("https://gemini.google.com", "_blank");
+        });
+    }
+
+    /**
+     * Exibe a mensagem do Toast na tela
+     */
+    function showToast(message) {
+        const toast = document.getElementById("toast-message");
+        const toastText = document.getElementById("toast-text");
+        if (!toast || !toastText) return;
+
+        toastText.textContent = message;
+        toast.classList.add("show");
+
+        // Oculta após 4 segundos
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 4000);
+    }
+
+    /**
+     * Retorna o projeto integrador padrão (offline) baseado no componente
+     */
+    function getDefaultProject(item) {
+        let tema = "Meio Ambiente";
+        let descricao = "";
+        
+        if (item.componente === "Matemática") {
+            tema = "Economia";
+            descricao = `
+                <p><strong>Objetivo:</strong> Resolver desafios de Educação Financeira conectando habilidades matemáticas à organização de dados.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Os alunos mapeiam no papel um fluxo de despesas e receitas lógicas de um evento da escola, estruturando um algoritmo simples de cálculo.</p>
+            `;
+        } else if (item.componente === "Língua Portuguesa") {
+            tema = "Cidadania e Civismo";
+            descricao = `
+                <p><strong>Objetivo:</strong> Produzir e ler textos instrucionais e informativos usando estruturas lógicas de decisão.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Os alunos escrevem regras de um jogo ou manual de convivência como um passo a passo estruturado ('se acontecer X, então faça Y').</p>
+            `;
+        } else if (item.componente === "Ciências" || item.componente.includes("Natureza")) {
+            tema = "Saúde";
+            descricao = `
+                <p><strong>Objetivo:</strong> Mapear dados biológicos ou de saúde comunitária utilizando representações lógicas.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Simular a transmissão de hábitos saudáveis ou controle de vetores por meio de um algoritmo físico de tomadas de decisão lúdicas na sala de aula.</p>
+            `;
+        } else if (item.componente === "Geografia" || item.componente === "História") {
+            tema = "Cidadania e Civismo";
+            descricao = `
+                <p><strong>Objetivo:</strong> Analisar a dinâmica do espaço geográfico ou eventos históricos utilizando fluxogramas causais.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Organizar um mural cronológico conectando transformações sociais a fluxogramas de causas e efeitos lógicos no papel craft.</p>
+            `;
+        } else if (item.componente === "Artes" || item.componente === "Arte") {
+            tema = "Multiculturalismo";
+            descricao = `
+                <p><strong>Objetivo:</strong> Criar e decodificar padrões estéticos e ritmos associados a diferentes matrizes culturais.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Alunos criam cartões de comando corporal de dança ou de desenho geométrico simétrico repetitivo, executando algoritmos artísticos em equipe.</p>
+            `;
+        } else {
+            // Default para outras matérias (ex: Educação Física, Ensino Religioso, etc.)
+            tema = "Ciência e Tecnologia";
+            descricao = `
+                <p><strong>Objetivo:</strong> Modelar processos práticos e regras por meio de passos lógicos e estruturas ordenadas.</p>
+                <p style="margin-top: 0.5rem;"><strong>Desafio Desplugado:</strong> Alunos decompõem as fases de um esporte ou atividade escolar em instruções lógicas sequenciais simples de serem seguidas ('depuração' de regras).</p>
+            `;
+        }
+
+        const titulo = `Projeto Integrador: ${item.componente} + Transversalidade`;
+
+        return {
+            tema: tema,
+            titulo: titulo,
+            descricao: descricao
+        };
+    }
+
+    /**
+     * Imprime apenas um card específico da lista
      */
     function printSingleCard(cardHtmlId) {
         const card = document.getElementById(cardHtmlId);
@@ -387,6 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectAno.value = "";
         selectComponente.value = "";
         selectEixo.value = "";
+        selectTct.value = "";
         
         updateAnoOptions();
         filterData();
@@ -401,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "Ensino Fundamental - Anos Iniciais": return "badge-segment-fundamental-iniciais";
             case "Ensino Fundamental - Anos Finais": return "badge-segment-fundamental-finais";
             case "Ensino Médio": return "badge-segment-medio";
-            case "Ensino Fundamental": return "badge-segment-fundamental-finais"; // Fallback geral
+            case "Ensino Fundamental": return "badge-segment-fundamental-finais";
             default: return "";
         }
     }
@@ -414,12 +579,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (eixo.includes("Pensamento Computacional")) return "badge-eixo-pensamento";
         if (eixo.includes("Mundo Digital")) return "badge-eixo-mundo";
         if (eixo.includes("Cultura Digital")) return "badge-eixo-cultura";
-        return "badge-eixo-pensamento"; // default
+        return "badge-eixo-pensamento";
     }
 
     /**
      * Gera uma integração de computação adaptativa baseada na série e matéria do aluno.
-     * Utilizado para as habilidades gerais da BNCC que não possuem mapeamento premium feito manualmente.
      */
     function getAdaptiveComputingIntegration(segmento, ano, componente) {
         if (segmento === "Educação Infantil") {
@@ -477,9 +641,9 @@ document.addEventListener("DOMContentLoaded", () => {
             codigo: "EM13CO03",
             descricao: "Utilizar ferramentas digitais para coletar, estruturar, analisar e representar dados para validar hipóteses.",
             atividade_desplugada: `Mapeamento e Classificação Manual de Dados: Os alunos catalogam dados estatísticos ou históricos do tema estudado em uma tabela no papel e aplicam critérios manuais de ordenação e filtro lógico antes de formular relatórios ecológicos ou sociais.`,
-            plataforma: "PhET Simulations",
-            plugged_titulo: "Modelagem de Dados e Simulações Interativas",
-            url: "https://phet.colorado.edu/pt_BR"
+            plataforma: "PhET Simulations (HTML5)",
+            plugged_titulo: "Simulações em HTML5 (Busque o Assunto)",
+            url: "https://phet.colorado.edu/en/simulations/filter?type=html"
         };
     }
 });

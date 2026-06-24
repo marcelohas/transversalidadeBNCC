@@ -1,7 +1,7 @@
 /**
  * Banco de Dados de Computação Transversal na BNCC
  * Contém o mapeamento de habilidades tradicionais da BNCC com as do Complemento de Computação.
- * Inclui atividades tradicionais, desplugadas e links para plataformas parceiras reais.
+ * Inclui atividades tradicionais, desplugadas, links para plataformas parceiras reais e Projetos Integradores com TCTs.
  */
 
 const BNCC_DATABASE = [
@@ -26,6 +26,11 @@ const BNCC_DATABASE = [
       plataforma: "Code.org",
       titulo: "Arrastar e Soltar (Prática de Padrões e Coordenação)",
       url: "https://studio.code.org/s/coursea-2023"
+    },
+    tema_transversal: "Meio Ambiente",
+    projeto_integrador: {
+      titulo: "Projeto Eco-Classificadores",
+      descricao: "<p><strong>Objetivo:</strong> Separar e classificar resíduos sólidos utilizando lógica de padrões e sequências lógicas.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Os alunos coletam resíduos recicláveis limpos e os organizam em sequências ordenadas repetitivas de materiais (Ex: plástico, papelão, plástico, papelão) antes de destiná-los ao descarte correto, compreendendo os padrões do lixo e a reciclagem.</p>"
     }
   },
 
@@ -50,6 +55,11 @@ const BNCC_DATABASE = [
       plataforma: "Code.org",
       titulo: "Programação na Abelha (Algoritmos Sequenciais)",
       url: "https://studio.code.org/s/courseb-2023/lessons/4"
+    },
+    tema_transversal: "Cidadania e Civismo",
+    projeto_integrador: {
+      titulo: "Manual de Convivência Escolar (Algoritmo Social)",
+      descricao: "<p><strong>Objetivo:</strong> Produzir e compreender instruções claras de regras de convívência escolar sob uma perspectiva algorítmica.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Escrever coletivamente regras de conduta ('se acontecer X, então faça Y') para brincadeiras no pátio e na fila, organizando o passo a passo lógico que todos devem seguir.</p>"
     }
   },
   {
@@ -69,9 +79,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Mapeamento Manual: O professor pede para a turma agrupar lápis de cor por tamanho (grande, médio, pequeno) ou por tonalidade, anotando em uma tabela em papel as quantidades de cada grupo. Ajuda a entender a classificação de dados.",
     atividade_plugada: {
-      plataforma: "Khan Academy",
-      titulo: "Contar com objetos (Prática Interativa de Contagem)",
-      url: "https://pt.khanacademy.org/math/pt-1-ano/numeros-de-0-a-10-1ano"
+      plataforma: "Khan Academy (YouTube)",
+      titulo: "Playlists do Canal Oficial (Busque o Assunto)",
+      url: "https://www.youtube.com/@khanacademyportugues/playlists"
+    },
+    tema_transversal: "Cidadania e Civismo",
+    projeto_integrador: {
+      titulo: "Inventário de Brinquedos Solidários",
+      descricao: "<p><strong>Objetivo:</strong> Classificar e contar brinquedos e livros organizando dados para apoiar campanhas de doação.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Alunos catalogam materiais e brinquedos usados trazidos de casa, classificando-os por tipo e estado de conservação em tabelas no quadro, preparando-os para partilha em um bazar escolar.</p>"
     }
   },
   {
@@ -83,7 +98,7 @@ const BNCC_DATABASE = [
       codigo: "EF03MA15",
       descricao: "Associar figuras geométricas espaciais a suas planificações e analisar suas características."
     },
-    atividade_tradicional: "Montar cubos, cilindros e prismas de papel a partir de moldes impressos em 2D, contando faces, arestas e vértices.",
+    atividade_tradicional: "Montar cubos, cilindros e prismas de papel a partir de moldes impressos in 2D, contando faces, arestas e vértices.",
     eixo_computacao: "Mundo Digital",
     habilidade_computacao: {
       codigo: "EF03CO03",
@@ -94,6 +109,11 @@ const BNCC_DATABASE = [
       plataforma: "Scratch",
       titulo: "Desenhando com Geometria (Uso da Caneta Scratch para Formas 3D/2D)",
       url: "https://scratch.mit.edu/projects/editor/?tutorial=getstarted"
+    },
+    tema_transversal: "Meio Ambiente",
+    projeto_integrador: {
+      titulo: "Maquete Sustentável da Nossa Cidade",
+      descricao: "<p><strong>Objetivo:</strong> Criar e mapear maquetes ecológicas associando plantas baixas 2D a maquetes físicas 3D.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Projetar uma praça ou bairro sustentável coletivo usando sucatas e caixas vazias estruturadas como sólidos geométricos, desenhando a planta com áreas de reciclagem e verde.</p>"
     }
   },
   {
@@ -113,9 +133,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Decomposição de Problema Escolar: O professor propõe um problema complexo como 'Como organizar uma gincana de matemática na escola?'. A turma deve quebrar esse problema gigante em partes menores (Ex: 1. Definir data, 2. Criar perguntas, 3. Organizar equipes, 4. Conseguir brindes), assimilando o conceito de decomposição.",
     atividade_plugada: {
-      plataforma: "Khan Academy",
-      titulo: "Decomposição de Números até 10.000 (Exercícios Práticos)",
-      url: "https://pt.khanacademy.org/math/pt-4-ano/numeros-sistema-de-numeracao-decimal-4ano"
+      plataforma: "Khan Academy (YouTube)",
+      titulo: "Playlists do Canal Oficial (Busque o Assunto)",
+      url: "https://www.youtube.com/@khanacademyportugues/playlists"
+    },
+    tema_transversal: "Economia",
+    projeto_integrador: {
+      titulo: "MiniMercado e Decomposição Financeira",
+      descricao: "<p><strong>Objetivo:</strong> Aplicar o conceito de decomposição no gerenciamento de finanças simuladas.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Os alunos estruturam um pequeno comércio escolar, decompondo preços de alimentos saudáveis usando dinheirinho de brinquedo (Notas de 100, 10 e 1 real), operando trocos de forma planejada.</p>"
     }
   },
   {
@@ -125,7 +150,7 @@ const BNCC_DATABASE = [
     componente: "Matemática",
     habilidade_bncc: {
       codigo: "EF05MA06",
-      descricao: "Associar as representações 10%, 25%, 50%, 75% e 100% respectivamente à décima parte, quarta parte, metade, três quartos e ao todo, para resolver problemas cotidianos que envolvam o cálculo de porcentagem."
+      descricao: "Associar as representações 10%, 25%, 50%, 75% e 100% respectively à décima parte, quarta parte, metade, três quartos e ao todo, para resolver problemas cotidianos que envolvam o cálculo de porcentagem."
     },
     atividade_tradicional: "Calcular 25% de R$ 200,00 no caderno utilizando regra de três simples ou frações correspondentes.",
     eixo_computacao: "Pensamento Computacional",
@@ -135,9 +160,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Frações de Chocolate Físico: O professor distribui barras de chocolate de papel divididas em 10 fatias. Os alunos simulam o cálculo de frações e porcentagem de distribuição lógicas de recursos entre grupos (Ex: 'Se eu der 5 fatias para a equipe A, qual a porcentagem que restou para a B?').",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Introdução a Proporções e Frações Dinâmicas (Modelagem Visual)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/fractions-intro"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Economia",
+    projeto_integrador: {
+      titulo: "Consumo de Água e Orçamento Ecológico",
+      descricao: "<p><strong>Objetivo:</strong> Representar e analisar estatísticas de desperdício doméstico usando porcentagens e frações lógicas.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Com faturas de água reais, os alunos identificam o volume gasto, desenham gráficos de setores em cartolinas representando o uso doméstico e propõem metas de redução de 25% ou 50% de desperdício.</p>"
     }
   },
   {
@@ -160,6 +190,11 @@ const BNCC_DATABASE = [
       plataforma: "Scratch",
       titulo: "Programando o Gato Scratch no Plano X-Y (Coordenadas de Movimento)",
       url: "https://scratch.mit.edu/projects/editor/?tutorial=getstarted"
+    },
+    tema_transversal: "Cidadania e Civismo",
+    projeto_integrador: {
+      titulo: "Trânsito Seguro na Malha Cartesiana",
+      descricao: "<p><strong>Objetivo:</strong> Planejar comandos coordenados em um plano cartesiano para guiar veículos e pedestres simulados com segurança.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Desenha-se uma malha no chão do pátio. Alunos atuam como semáforos, veículos e pedestres, comandando-se através de coordenadas de pares ordenados ('Vá para X=2, Y=3') para evitar acidentes lógicos.</p>"
     }
   },
   {
@@ -179,9 +214,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Jogo do Barbante Ecológico: Alunos com crachás de seres vivos conectam-se usando fios de barbante para simular o fluxo de energia. O professor 'desliga' um nó do sistema (Ex: poluição elimina insetos) e os alunos observam fisicamente como toda a rede é afetada (decomposição de redes e depuração lógica de erros).",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Seleção Natural e Ecossistemas Dinâmicos (Modelagem Simulada)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/natural-selection"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Meio Ambiente",
+    projeto_integrador: {
+      titulo: "Teias Ecológicas no Ecossistema Local",
+      descricao: "<p><strong>Objetivo:</strong> Mapear relações tróficas e depurar falhas em ecossistemas locais impactados por ações humanas.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Mapeamento manual com cartas de espécies locais no pátio. Estudantes criam redes de alimentação complexas no chão e 'depuram' a teia quando um desastre ou poluição atinge o produtor ou predador principal.</p>"
     }
   },
 
@@ -201,11 +241,16 @@ const BNCC_DATABASE = [
       codigo: "EF06CO02",
       descricao: "Identificar, analisar e criar algoritmos com variáveis e operadores aritméticos e lógicos."
     },
-    atividade_desplugada: "Algoritmo de Prioridades: Alunos em grupo criam cartões com valores e cartões de operação/condição. Eles criam um 'organograma de fluxo' no quadro ou papel craft para demonstrar que o caminho para calcular muda dependendo dos parênteses, simulando uma máquina lógica.",
+    atividade_desplugada: "Algoritmo de Prioridades: Alunos em grupo criam cartões com valores e cartões de operation/condição. Eles criam um 'organograma de fluxo' no quadro ou papel craft para demonstrar que o caminho para calcular muda dependendo dos parênteses, simulando uma máquina lógica.",
     atividade_plugada: {
-      plataforma: "Khan Academy",
-      titulo: "Precedência das Operações (Aritmética Básica)",
-      url: "https://pt.khanacademy.org/math/pt-6-ano/aritmetica-e-numeros-negativos-6ano"
+      plataforma: "Khan Academy (YouTube)",
+      titulo: "Playlists do Canal Oficial (Busque o Assunto)",
+      url: "https://www.youtube.com/@khanacademyportugues/playlists"
+    },
+    tema_transversal: "Economia",
+    projeto_integrador: {
+      titulo: "Simulador de Gastos com Precedência de Operações",
+      descricao: "<p><strong>Objetivo:</strong> Organizar cálculos de orçamento familiar utilizando precedência matemática e lógica.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Os alunos constroem fluxogramas em grupo para calcular impostos fixos, despesas prioritárias e poupanças mensais de uma família fictícia, estruturando os passos exatos com regras de hierarquia de conta.</p>"
     }
   },
   {
@@ -225,9 +270,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Modelagem de Epidemias: Jogo de tabuleiro desplugado simulando a disseminação de um vírus. Cada rodada representa uma decisão (tomar remédio, isolar-se, usar máscara) e os alunos jogam dados para computar a taxa de contágio baseada nas variáveis de saúde.",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Simulando Estados da Matéria e Moléculas (Ciência de Materiais)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/states-of-matter"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Saúde",
+    projeto_integrador: {
+      titulo: "Vacinas e Modelagem de Imunidade Coletiva",
+      descricao: "<p><strong>Objetivo:</strong> Simular taxas de contágio bacteriano ou viral compreendendo o papel da imunização de rebanho.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Simulação ativa de contágio na sala por meio de cartas de status ('imunizado', 'vulnerável'). Os alunos testam diferentes proporções de cobertura vacinal da turma e tabelam a velocidade da infecção.</p>"
     }
   },
   {
@@ -247,9 +297,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Divisão lógica de tarefas: Os alunos criam diagramas de blocos que mostram a partilha de recursos comuns em um projeto escolar (tempo de apresentação, espaço físico), dividindo o todo em partes e frações lógicas.",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Introdução a Frações (Simulação Interativa Visual)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/fractions-intro"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Saúde",
+    projeto_integrador: {
+      titulo: "Receita Sustentável e Aproveitamento de Alimentos",
+      descricao: "<p><strong>Objetivo:</strong> Aplicar lógica fracionária em porções de alimentos saudáveis para turmas e famílias de diferentes tamanhos.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Os alunos criam um receituário para refeitório, adaptando o tamanho dos ingredientes utilizando frações e proporções matemáticas, mitigando o desperdício financeiro e alimentar.</p>"
     }
   },
   {
@@ -269,9 +324,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Painel de Debate 'Trabalho do Futuro': Roda de conversa estruturada com papéis sorteados (sindicalista, empresário da tecnologia, trabalhador industrial, agricultor). Debate-se o impacto da automação por IA no desemprego e na economia dos países em desenvolvimento.",
     atividade_plugada: {
-      plataforma: "Khan Academy",
-      titulo: "A Revolução Industrial e Tecnológica (Curso de História e Sociedade)",
-      url: "https://pt.khanacademy.org/humanities/global-studies/world-history-projection"
+      plataforma: "Khan Academy (YouTube)",
+      titulo: "Playlists do Canal Oficial (Busque o Assunto)",
+      url: "https://www.youtube.com/@khanacademyportugues/playlists"
+    },
+    tema_transversal: "Ciência e Tecnologia",
+    projeto_integrador: {
+      titulo: "O Impacto da Inteligência Artificial no Trabalho",
+      descricao: "<p><strong>Objetivo:</strong> Avaliar criticamente os impactos sociais das transformações digitais na economia e na cultura global.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Elaboração de um manifesto ou carta aberta escolar com propostas éticas sobre como preparar a comunidade estudantil local para os empregos tecnológicos, combatendo a exclusão digital.</p>"
     }
   },
   {
@@ -291,9 +351,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Simulação Desplugada de Predação: Alunos usam prendedores de tamanhos variados para catar feijões no chão. A cada rodada, os bicos menos eficientes 'não sobrevivem' e as características dos sobreviventes são registradas em cartazes, simulando a lógica da seleção natural por meio de regras computáveis.",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Seleção Natural (Laboratório Ecológico Interativo)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/natural-selection"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Saúde",
+    projeto_integrador: {
+      titulo: "Resistência Bacteriana e Seleção Natural",
+      descricao: "<p><strong>Objetivo:</strong> Simular e explicar a evolução bacteriana por seleção natural induzida pelo uso indevido de antibióticos.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Dinâmica lúdica em que feijões pretos e brancos representam populações de bactérias com e sem mutação protetiva. Aplica-se 'doses' lógicas de antibióticos para catalogar a sobrevivência e alertar sobre automedicação.</p>"
     }
   },
 
@@ -315,9 +380,14 @@ const BNCC_DATABASE = [
     },
     atividade_desplugada: "Análise Cidadã de Dados da Escola: Coleta manual de dados sobre a geração de resíduos plásticos da escola durante uma semana. Em sala, os alunos usam cartões para ordenar e filtrar os dados manuais, desenhando gráficos de tendências em cartolinas para apresentar medidas de redução ao diretor.",
     atividade_plugada: {
-      plataforma: "PhET Simulations",
-      titulo: "Laboratório de Força da Gravidade (Modelagem Matemática Dinâmica)",
-      url: "https://phet.colorado.edu/pt_BR/simulations/gravity-force-lab-basics"
+      plataforma: "PhET Simulations (HTML5)",
+      titulo: "Simulações em HTML5 (Busque o Assunto)",
+      url: "https://phet.colorado.edu/en/simulations/filter?type=html"
+    },
+    tema_transversal: "Ciência e Tecnologia",
+    projeto_integrador: {
+      titulo: "Estudo de Eficiência Energética e Coleta de Dados",
+      descricao: "<p><strong>Objetivo:</strong> Coletar e tratar dados físicos de consumo elétrico para justificar projetos escolares de eficiência e corte de gastos.</p><p style='margin-top: 0.5rem;'><strong>Desafio Desplugado:</strong> Levantamento estatístico de tomadas e lâmpadas da escola, estimando o tempo de uso. Os alunos criam uma planilha física e realizam cálculos lógicos de potência para apresentar recomendações de sustentabilidade.</p>"
     }
   }
 ];

@@ -50,6 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return ano;
     }
 
+    function normalizeComponente(comp) {
+        if (!comp) return "";
+        let clean = comp.trim();
+        if (clean.toLowerCase().includes("espacos, tempos") || clean.toLowerCase().includes("espacos, tem")) {
+            return "Espaços, Tempos, Quantidades, Relações";
+        }
+        if (clean.toLowerCase() === "arte") return "Artes";
+        if (clean.toLowerCase() === "ciencias da natureza") return "Ciências da Natureza";
+        if (clean.toLowerCase() === "ciencias") return "Ciências";
+        return clean;
+    }
+
     // Adiciona os mapeamentos customizados de referência (Premium)
     BNCC_DATABASE.forEach(item => {
         const projectData = item.projeto_integrador || {
@@ -58,10 +70,12 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
         const anoNorm = normalizeAno(segmentoNorm, item.ano);
+        const compNorm = normalizeComponente(item.componente);
         FULL_CURRICULUM.push({
             ...item,
             segmento: segmentoNorm,
             ano: anoNorm,
+            componente: compNorm,
             tema_transversal: item.tema_transversal || "Meio Ambiente",
             projeto_integrador: projectData,
             isCustom: true
@@ -76,11 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!alreadyMapped) {
                 const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
                 const anoNorm = normalizeAno(segmentoNorm, item.ano);
-                const compIntegration = getAdaptiveComputingIntegration(segmentoNorm, anoNorm, item.componente);
+                const compNorm = normalizeComponente(item.componente);
+                const compIntegration = getAdaptiveComputingIntegration(segmentoNorm, anoNorm, compNorm);
                 
                 // Obter dados locais padrão para o Projeto Integrador
                 const tempItem = {
-                    componente: item.componente,
+                    componente: compNorm,
                     segmento: segmentoNorm,
                     ano: anoNorm
                 };
@@ -90,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     id: `${item.codigo}_AUTO`,
                     segmento: segmentoNorm,
                     ano: anoNorm,
-                    componente: item.componente,
+                    componente: compNorm,
                     habilidade_bncc: {
                         codigo: item.codigo,
                         descricao: item.descricao
@@ -119,21 +134,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Inicialização
-    initFilters();
+    updateFilterOptions();
     filterData(); // Filtra e carrega o estado inicial (cards premium)
 
     // Ouvintes de Eventos
-    if (searchInput) searchInput.addEventListener("input", filterData);
-    if (selectSegmento) {
-        selectSegmento.addEventListener("change", () => {
-            updateAnoOptions(); // Filtra os anos disponíveis com base no segmento
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            updateFilterOptions();
             filterData();
         });
     }
-    if (selectAno) selectAno.addEventListener("change", filterData);
-    if (selectComponente) selectComponente.addEventListener("change", filterData);
-    if (selectEixo) selectEixo.addEventListener("change", filterData);
-    if (selectTct) selectTct.addEventListener("change", filterData);
+    if (selectSegmento) {
+        selectSegmento.addEventListener("change", () => {
+            updateFilterOptions();
+            filterData();
+        });
+    }
+    if (selectAno) {
+        selectAno.addEventListener("change", () => {
+            updateFilterOptions();
+            filterData();
+        });
+    }
+    if (selectComponente) {
+        selectComponente.addEventListener("change", () => {
+            updateFilterOptions();
+            filterData();
+        });
+    }
+    if (selectEixo) {
+        selectEixo.addEventListener("change", () => {
+            updateFilterOptions();
+            filterData();
+        });
+    }
+    if (selectTct) {
+        selectTct.addEventListener("change", () => {
+            updateFilterOptions();
+            filterData();
+        });
+    }
     
     if (btnClear) btnClear.addEventListener("click", resetAllFilters);
     if (btnPrintAll) {
@@ -185,63 +225,105 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Inicializa os selects de filtro com valores dinâmicos de toda a base de dados
+     * Atualiza dinamicamente as opções dos dropdowns de filtros para refletir apenas os dados válidos
      */
-    function initFilters() {
-        const segmentos = [...new Set(FULL_CURRICULUM.map(item => item.segmento))].sort();
-        const componentes = [...new Set(FULL_CURRICULUM.map(item => item.componente))].sort();
-        const eixos = [...new Set(FULL_CURRICULUM.map(item => item.eixo_computacao))].sort();
+    function updateFilterOptions() {
+        const query = normalizeString(searchInput.value).trim();
+        const currentSegmento = selectSegmento.value;
+        const currentAno = selectAno.value;
+        const currentComponente = selectComponente.value;
+        const currentEixo = selectEixo.value;
+        const currentTct = selectTct.value;
 
-        segmentos.forEach(seg => {
-            const opt = document.createElement("option");
-            opt.value = seg;
-            opt.textContent = seg;
-            selectSegmento.appendChild(opt);
-        });
-
-        componentes.forEach(comp => {
-            const opt = document.createElement("option");
-            opt.value = comp;
-            opt.textContent = comp;
-            selectComponente.appendChild(opt);
-        });
-
-        eixos.forEach(eixo => {
-            const opt = document.createElement("option");
-            opt.value = eixo;
-            opt.textContent = eixo;
-            selectEixo.appendChild(opt);
-        });
-
-        updateAnoOptions();
-    }
-
-    /**
-     * Atualiza o select de anos/séries baseado no segmento selecionado
-     */
-    function updateAnoOptions() {
-        const selectedSegmento = selectSegmento.value;
-        selectAno.innerHTML = '<option value="">Todos os Anos</option>';
-
-        let filteredItems = FULL_CURRICULUM;
-        if (selectedSegmento) {
-            filteredItems = FULL_CURRICULUM.filter(item => item.segmento === selectedSegmento);
+        // Helper para filtrar o FULL_CURRICULUM desconsiderando um filtro específico
+        function getFilteredSubset(excludeFilterName) {
+            return FULL_CURRICULUM.filter(item => {
+                if (excludeFilterName !== 'segmento' && currentSegmento && item.segmento !== currentSegmento) return false;
+                if (excludeFilterName !== 'ano' && currentAno && item.ano !== currentAno) return false;
+                if (excludeFilterName !== 'componente' && currentComponente && item.componente !== currentComponente) return false;
+                if (excludeFilterName !== 'eixo' && currentEixo && item.eixo_computacao !== currentEixo) return false;
+                if (excludeFilterName !== 'tct' && currentTct && item.tema_transversal !== currentTct) return false;
+                
+                if (query) {
+                    const searchStr = normalizeString([
+                        item.id,
+                        item.ano,
+                        item.componente,
+                        item.habilidade_bncc.codigo,
+                        item.habilidade_bncc.descricao,
+                        item.habilidade_computacao.codigo,
+                        item.habilidade_computacao.descricao,
+                        item.atividade_tradicional,
+                        item.atividade_desplugada,
+                        item.atividade_plugada.titulo,
+                        item.atividade_plugada.plataforma,
+                        item.tema_transversal,
+                        item.projeto_integrador.titulo
+                    ].join(" "));
+                    return searchStr.includes(query);
+                }
+                return true;
+            });
         }
 
-        const anos = [...new Set(filteredItems.map(item => item.ano))].sort((a, b) => {
+        // 1. Atualizar opções de Segmento
+        const subsetSegmento = getFilteredSubset('segmento');
+        const segmentosDisponiveis = [...new Set(subsetSegmento.map(i => i.segmento))].sort();
+        rebuildSelect(selectSegmento, segmentosDisponiveis, currentSegmento, "Todos os Segmentos");
+
+        // 2. Atualizar opções de Ano
+        const subsetAno = getFilteredSubset('ano');
+        const anosDisponiveis = [...new Set(subsetAno.map(i => i.ano))].sort((a, b) => {
             const numA = parseInt(a);
             const numB = parseInt(b);
             if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
             return a.localeCompare(b);
         });
+        rebuildSelect(selectAno, anosDisponiveis, currentAno, "Todos os Anos");
 
-        anos.forEach(ano => {
-            const opt = document.createElement("option");
-            opt.value = ano;
-            opt.textContent = ano;
-            selectAno.appendChild(opt);
-        });
+        // 3. Atualizar opções de Componente (Disciplina)
+        const subsetComponente = getFilteredSubset('componente');
+        const componentesDisponiveis = [...new Set(subsetComponente.map(i => i.componente))].sort();
+        rebuildSelect(selectComponente, componentesDisponiveis, currentComponente, "Todas as Disciplinas");
+
+        // 4. Atualizar opções de Eixo
+        const subsetEixo = getFilteredSubset('eixo');
+        const eixosDisponiveis = [...new Set(subsetEixo.map(i => i.eixo_computacao))].sort();
+        rebuildSelect(selectEixo, eixosDisponiveis, currentEixo, "Todos os Eixos");
+
+        // 5. Atualizar opções de TCT
+        const subsetTct = getFilteredSubset('tct');
+        const tctsDisponiveis = [...new Set(subsetTct.map(i => i.tema_transversal))].sort();
+        rebuildSelect(selectTct, tctsDisponiveis, currentTct, "Todos os Temas");
     }
+
+    function rebuildSelect(selectEl, newOptions, currentValue, defaultLabel) {
+        if (!selectEl) return;
+        selectEl.innerHTML = '';
+        
+        const defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = defaultLabel;
+        selectEl.appendChild(defaultOpt);
+
+        let valueStillExists = false;
+        newOptions.forEach(optVal => {
+            if (!optVal) return;
+            const opt = document.createElement("option");
+            opt.value = optVal;
+            opt.textContent = optVal;
+            if (optVal === currentValue) {
+                opt.selected = true;
+                valueStillExists = true;
+            }
+            selectEl.appendChild(opt);
+        });
+
+        if (!valueStillExists && currentValue !== "") {
+            selectEl.value = "";
+        }
+    }
+
 
     /**
      * Remove acentos, diacríticos e converte a string para caixa baixa

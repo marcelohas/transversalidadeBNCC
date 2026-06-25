@@ -16,8 +16,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsCount = document.getElementById("results-count");
     const cardsContainer = document.getElementById("cards-container");
 
-    // 1. COMBINAR OS BANCOS DE DADOS
+    // 1. COMBINAR E NORMALIZAR OS BANCOS DE DADOS
     const FULL_CURRICULUM = [];
+
+    function normalizeSegmento(segmento, ano) {
+        if (segmento === "Ensino Fundamental") {
+            const gradeNum = parseInt(ano);
+            if (!isNaN(gradeNum)) {
+                return gradeNum <= 5 ? "Ensino Fundamental - Anos Iniciais" : "Ensino Fundamental - Anos Finais";
+            }
+            if (ano.includes("1º") || ano.includes("2º") || ano.includes("3º") || ano.includes("4º") || ano.includes("5º")) {
+                return "Ensino Fundamental - Anos Iniciais";
+            }
+            if (ano.includes("6º") || ano.includes("7º") || ano.includes("8º") || ano.includes("9º")) {
+                return "Ensino Fundamental - Anos Finais";
+            }
+        }
+        return segmento;
+    }
+
+    function normalizeAno(segmento, ano) {
+        if (segmento === "Educação Infantil") {
+            if (ano.includes("Pré-escola") || ano.includes("Crianças pequenas") || ano.includes("4 a 5 anos")) {
+                return "Crianças pequenas (4 a 5 anos)";
+            }
+            if (ano.includes("Crianças bem pequenas")) {
+                return "Crianças bem pequenas (1 ano e 7 meses a 3 anos e 11 meses)";
+            }
+            if (ano.includes("Bebês")) {
+                return "Bebês (0 a 1 ano e 6 meses)";
+            }
+        }
+        return ano;
+    }
 
     // Adiciona os mapeamentos customizados de referência (Premium)
     BNCC_DATABASE.forEach(item => {
@@ -25,8 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
             titulo: `Projeto: ${item.componente} + Pensamento Computacional`,
             descricao: `<p><strong>Objetivo:</strong> Resolver problemas reais integrando o conteúdo regular de ${item.componente} à lógica computacional.</p>`
         };
+        const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
+        const anoNorm = normalizeAno(segmentoNorm, item.ano);
         FULL_CURRICULUM.push({
             ...item,
+            segmento: segmentoNorm,
+            ano: anoNorm,
             tema_transversal: item.tema_transversal || "Meio Ambiente",
             projeto_integrador: projectData,
             isCustom: true
@@ -39,20 +74,22 @@ document.addEventListener("DOMContentLoaded", () => {
             // Evita duplicar se já foi mapeada manualmente na base premium
             const alreadyMapped = BNCC_DATABASE.some(dbItem => dbItem.habilidade_bncc.codigo === item.codigo);
             if (!alreadyMapped) {
-                const compIntegration = getAdaptiveComputingIntegration(item.segmento, item.ano, item.componente);
+                const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
+                const anoNorm = normalizeAno(segmentoNorm, item.ano);
+                const compIntegration = getAdaptiveComputingIntegration(segmentoNorm, anoNorm, item.componente);
                 
                 // Obter dados locais padrão para o Projeto Integrador
                 const tempItem = {
                     componente: item.componente,
-                    segmento: item.segmento,
-                    ano: item.ano
+                    segmento: segmentoNorm,
+                    ano: anoNorm
                 };
                 const projectData = getDefaultProject(tempItem);
 
                 FULL_CURRICULUM.push({
                     id: `${item.codigo}_AUTO`,
-                    segmento: item.segmento,
-                    ano: item.ano,
+                    segmento: segmentoNorm,
+                    ano: anoNorm,
                     componente: item.componente,
                     habilidade_bncc: {
                         codigo: item.codigo,

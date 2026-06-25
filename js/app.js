@@ -19,22 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. COMBINAR E NORMALIZAR OS BANCOS DE DADOS
     const FULL_CURRICULUM = [];
 
-    function normalizeSegmento(segmento, ano) {
-        if (segmento === "Ensino Fundamental") {
-            const gradeNum = parseInt(ano);
-            if (!isNaN(gradeNum)) {
-                return gradeNum <= 5 ? "Ensino Fundamental - Anos Iniciais" : "Ensino Fundamental - Anos Finais";
-            }
-            if (ano.includes("1º") || ano.includes("2º") || ano.includes("3º") || ano.includes("4º") || ano.includes("5º")) {
-                return "Ensino Fundamental - Anos Iniciais";
-            }
-            if (ano.includes("6º") || ano.includes("7º") || ano.includes("8º") || ano.includes("9º")) {
-                return "Ensino Fundamental - Anos Finais";
-            }
-        }
-        return segmento;
-    }
-
     function normalizeAno(segmento, ano) {
         if (segmento === "Educação Infantil") {
             if (ano.includes("Pré-escola") || ano.includes("Crianças pequenas") || ano.includes("4 a 5 anos")) {
@@ -47,7 +31,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 return "Bebês (0 a 1 ano e 6 meses)";
             }
         }
+        
+        // Correções dos códigos aglutinados do Ensino Fundamental (typos da base original)
+        if (ano === "12º Ano") return "1º e 2º Ano";
+        if (ano === "15º Ano") return "1º ao 5º Ano";
+        if (ano === "35º Ano") return "3º ao 5º Ano";
+        if (ano === "67º Ano") return "6º e 7º Ano";
+        if (ano === "89º Ano") return "8º e 9º Ano";
+        if (ano === "69º Ano") return "6º ao 9º Ano";
+
         return ano;
+    }
+
+    function normalizeSegmento(segmento, anoNorm) {
+        if (segmento === "Ensino Fundamental") {
+            const gradeNum = parseInt(anoNorm);
+            if (!isNaN(gradeNum)) {
+                return gradeNum <= 5 ? "Ensino Fundamental - Anos Iniciais" : "Ensino Fundamental - Anos Finais";
+            }
+            if (anoNorm.includes("1º") || anoNorm.includes("2º") || anoNorm.includes("3º") || anoNorm.includes("4º") || anoNorm.includes("5º")) {
+                return "Ensino Fundamental - Anos Iniciais";
+            }
+            if (anoNorm.includes("6º") || anoNorm.includes("7º") || anoNorm.includes("8º") || anoNorm.includes("9º")) {
+                return "Ensino Fundamental - Anos Finais";
+            }
+        }
+        return segmento;
     }
 
     function normalizeComponente(comp) {
@@ -68,8 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
             titulo: `Projeto: ${item.componente} + Pensamento Computacional`,
             descricao: `<p><strong>Objetivo:</strong> Resolver problemas reais integrando o conteúdo regular de ${item.componente} à lógica computacional.</p>`
         };
-        const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
-        const anoNorm = normalizeAno(segmentoNorm, item.ano);
+        const anoNorm = normalizeAno(item.segmento, item.ano);
+        const segmentoNorm = normalizeSegmento(item.segmento, anoNorm);
         const compNorm = normalizeComponente(item.componente);
         FULL_CURRICULUM.push({
             ...item,
@@ -88,8 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Evita duplicar se já foi mapeada manualmente na base premium
             const alreadyMapped = BNCC_DATABASE.some(dbItem => dbItem.habilidade_bncc.codigo === item.codigo);
             if (!alreadyMapped) {
-                const segmentoNorm = normalizeSegmento(item.segmento, item.ano);
-                const anoNorm = normalizeAno(segmentoNorm, item.ano);
+                const anoNorm = normalizeAno(item.segmento, item.ano);
+                const segmentoNorm = normalizeSegmento(item.segmento, anoNorm);
                 const compNorm = normalizeComponente(item.componente);
                 const compIntegration = getAdaptiveComputingIntegration(segmentoNorm, anoNorm, compNorm);
                 
